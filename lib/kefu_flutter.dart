@@ -422,7 +422,7 @@ class KeFuStore with ChangeNotifier {
       "timestamp": timestamp,
       "read": 0,
       "transfer_account": 0,
-      "payload": content
+      "payload": "$content"
     };
     message.payload = base64Encode(utf8.encode(json.encode(payloadMap)));
     return MessageHandle(
