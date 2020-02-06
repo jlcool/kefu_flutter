@@ -9,7 +9,8 @@
 
 ## 本项目关联GIT项目资源连接
 - **[服务端][1]** 
-- **[客服端][2]** 
+- **[客服端-APP工作台][7]**      客服端APP工作台flutter源码
+- **[客服端-网页工作台][2]** 
 - **[客户端H5][3]**
 - **[客户端Flutter][4]**
 - **[Flutter-mimc][6]**
@@ -116,3 +117,4 @@ void dispose() {
   [4]: https://github.com/chenxianqi/kefu_flutter
   [5]: http://kf.aissz.com:666/static/app/app-release.apk
   [6]: https://github.com/chenxianqi/flutter_mimc
+  [7]: https://github.com/chenxianqi/kefu_workbench
