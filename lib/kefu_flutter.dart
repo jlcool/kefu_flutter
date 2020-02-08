@@ -586,9 +586,6 @@ class KeFuStore with ChangeNotifier {
             prefs.setString(
                 "currentServiceUser_${imUser?.id}", message.payload);
             isService = true;
-            MessageHandle msgHandle = createMessage(
-                toAccount: toAccount, msgType: "handshake", content: "与客服握握手鸭");
-            sendMessage(msgHandle);
             break;
           case "end":
           case "timeout":
