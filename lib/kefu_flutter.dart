@@ -77,6 +77,12 @@ class KeFuStore with ChangeNotifier {
   /// 聊天记录
   List<ImMessage> messagesRecord = [];
 
+  /// 最后一条消息
+  ImMessage get lastMessage{
+    if(messagesRecord.length > 0) return messagesRecord[messagesRecord.length-1];
+    return null;
+  }
+
   /// 显示对方输入中...
   bool isPong = false;
 
@@ -210,7 +216,7 @@ class KeFuStore with ChangeNotifier {
     _onServciceLastMessageTimeNotCallBack();
     getMessageRecord();
     _currentIsService();
-    loginIm();
+    if(isAutoLogin) loginIm();
   }
 
   /// 判断当前是否是客服状态
@@ -636,7 +642,6 @@ class KeFuStore with ChangeNotifier {
 
   /// 登录Im
   Future<void> loginIm() async {
-    if (!isAutoLogin) return;
     await Future.delayed(Duration(milliseconds: delayLoginTime));
     if (!await flutterMImc?.isOnline()) {
       debugPrint("登录中...");
