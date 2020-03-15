@@ -105,11 +105,13 @@ class KeFuStore with ChangeNotifier {
   ScrollController scrollController = ScrollController();
 
   /// 小米消息云配置
-  static String mImcAppID;
-  static String mImcAppKey;
-  static String mImcAppSecret;
+  // static String mImcAppID;
+  // static String mImcAppKey;
+  // static String mImcAppSecret;
   static String mImcTokenData;
   static bool mImcDebug;
+
+
 
   /// 是否自动登录
   static bool isAutoLogin;
@@ -119,6 +121,10 @@ class KeFuStore with ChangeNotifier {
 
   /// 业务平台ID
   static int platformUserId;
+  ///绑定业务系统用户名
+  static String platformNickName;
+  ///绑定业务系统头像
+  static String platformAvatar;
 
   /// API 接口
   static String apiHost;
@@ -170,22 +176,23 @@ class KeFuStore with ChangeNotifier {
   /// [delayTime] 延迟登录，默认1500毫秒，以免未实例化完成就调用登录
   static KeFuStore getInstance(
       {String host,
-      String appID,
-      String appKey,
-      String appSecret,
       String mimcToken,
+      String nickName="",
+      String avatar="",
       int userId = 0,
       bool autoLogin = true,
-      int delayTime = 1500,
+      int delayTime = 1500,      
       bool debug = false}) {
     assert(host != null);
     apiHost = host;
-    mImcAppID = appID;
-    mImcAppKey = appKey;
-    mImcAppSecret = appSecret;
+    // mImcAppID = appID;
+    // mImcAppKey = appKey;
+    // mImcAppSecret = appSecret;
     mImcTokenData = mimcToken;
     mImcDebug = debug;
     platformUserId = userId;
+    platformNickName=nickName;
+    platformAvatar=avatar;
     isAutoLogin = autoLogin;
     delayLoginTime = delayTime < 1000 ? 1000 : delayTime;
     if (instance == null) {
@@ -252,16 +259,17 @@ class KeFuStore with ChangeNotifier {
 
   /// 实例化 FlutterMImc
   Future<void> _flutterMImcInstance() async {
+
+//  flutterMImc = FlutterMIMC.init(
+//           debug: mImcDebug,
+//           appId: "2882303761517882763",
+//           appKey: "5731788276763",
+//           appSecret: "NBIahdK5vxYpQ31JndRShw==",
+//           appAccount: imUser.id.toString());
+
     if (mImcTokenData != null) {
-      flutterMImc = FlutterMIMC.stringTokenInit(mImcTokenData);
-    } else {
-      flutterMImc = FlutterMIMC.init(
-          debug: mImcDebug,
-          appId: mImcAppID,
-          appKey: mImcAppKey,
-          appSecret: mImcAppSecret,
-          appAccount: imUser.id.toString());
-    }
+      flutterMImc = FlutterMIMC.stringTokenInit(mImcTokenData,debug: true);
+    }  
   }
 
   /// 注册IM账号
@@ -276,7 +284,7 @@ class KeFuStore with ChangeNotifier {
       });
       if (response.data["code"] == 200) {
         imTokenInfo =
-            ImTokenInfo.fromJson(response.data["data"]["token"]["data"]);
+            ImTokenInfo.fromJson(json.decode(mImcTokenData)["data"]);
         imUser = ImUser.fromJson(response.data["data"]["user"]);
         prefs.setInt("ImAccount", imUser.id);
       } else {
@@ -499,8 +507,15 @@ class KeFuStore with ChangeNotifier {
     if (msg.fromAccount == imUser.id) {
       /// 这里如果是接入业务平台可替换成用户头像和昵称
       /// if (uid == myUid)  msg.avatar = MyAvatar
-      /// if (uid == myUid)  msg.nickname = MyNickname
+      // if (uid == myUid)  msg.nickname = MyNickname
       msg.nickname = "我";
+      if(platformNickName!=null && platformNickName.isNotEmpty){
+        msg.nickname = platformNickName;
+      }
+      if(platformAvatar!=null && platformAvatar.isNotEmpty){
+        msg.avatar = platformAvatar;
+      }
+      
     } else {
       if (serviceUser != null && serviceUser.id == msg.fromAccount) {
         msg.nickname = serviceUser.nickname ?? "客服";
@@ -1111,7 +1126,7 @@ class _KeFuState extends State<_KeFu> {
       width: double.infinity,
       padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
       decoration: BoxDecoration(
-          color: Colors.white,
+          color: themeData.cardColor,
           border: Border(
             top: BorderSide(color: Colors.grey.withAlpha(60), width: .5),
             bottom: BorderSide(
@@ -1205,7 +1220,7 @@ class _KeFuState extends State<_KeFu> {
                 offstage: Platform.isIOS && !_isShowEmoJiPanel,
                 child: Center(
                   child: SizedBox(
-                    width: 60.0,
+                    width: 70.0,
                     child: FlatButton(
                       color: Theme.of(context).primaryColor,
                       onPressed: () {
@@ -1214,7 +1229,7 @@ class _KeFuState extends State<_KeFu> {
                       },
                       child: Text(
                         "发送",
-                        style: TextStyle(color: Colors.white),
+                        style: TextStyle(color: Theme.of(context).buttonTheme.colorScheme.primary),
                       ),
                     ),
                   ),
@@ -1241,6 +1256,7 @@ class _KeFuState extends State<_KeFu> {
     final keFuState = Provider.of<KeFuStore>(context);
     return AppBar(
       centerTitle: true,
+      elevation: 0,
       title: Text(keFuState.isPong ? "对方正在输入..." : '在线客服'),
       actions: <Widget>[
         Offstage(
@@ -1248,18 +1264,20 @@ class _KeFuState extends State<_KeFu> {
           child: FlatButton(
             child: Text(
               "结束会话",
-              style: TextStyle(color: Colors.white),
+              style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
             ),
             onPressed: _onHeadRightButton,
           ),
         ),
         Offstage(
             offstage: keFuState.isService,
-            child: IconButton(
-              icon: Image.network("http://qiniu.cmp520.com/kefu_icon_2000.png",
-                  width: 25.0, height: 25.0),
-              onPressed: _onHeadRightButton,
-            ))
+            child: FlatButton(
+            child: Text(
+              "人工",
+              style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+            ),
+            onPressed: _onHeadRightButton,
+          ))
       ],
     );
   }
@@ -1437,7 +1455,7 @@ class _KeFuState extends State<_KeFu> {
                     ),
                   ),
                   Container(
-                    color: Colors.white,
+                    color: Theme.of(context).cardColor,
                     child: SafeArea(
                       top: false,
                       child: Column(

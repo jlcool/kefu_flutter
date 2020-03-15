@@ -41,14 +41,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _action() {
     Navigator.push(context, CupertinoPageRoute(builder: (ctx){
-      return _keFu.view();
-    }));
-  }
-
-  @override
-  void initState() {
-
-      // 获得实例并监听数据动态 (1)
+      if(_keFu==null){
+        // 获得实例并监听数据动态 (1)
       // 单列 获取对象
       /// 配置信息
       /// mImcTokenData 不为空，即优先使用 mImcTokenData
@@ -63,10 +57,10 @@ class _MyHomePageState extends State<MyHomePage> {
       _keFu = KeFuStore.getInstance(
           debug: true,
           autoLogin: true,
-          host: "http://kf.aissz.com:666/v1",
-          appID: "2882303761518282099",
-          appKey: "5521828290099",
-          appSecret: "516JCA60FdP9bHQUdpXK+Q=="
+          userId: 1001,
+          host: "",
+          avatar: "",
+          mimcToken: ''
       );
 
       // 获得实例并监听数据动态 (2)
@@ -76,8 +70,13 @@ class _MyHomePageState extends State<MyHomePage> {
           _keFu = KeFuStore.instance;
           if(mounted) setState(() {});
       });
+      }
+      return _keFu.view();
+    }));
+  }
 
-
+  @override
+  void initState() {
     super.initState();
 
   }
@@ -107,8 +106,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   color: Colors.black
                 ),
                 children: [
-                  TextSpan(text: "用户id: ${_keFu.imUser?.id ?? 0}   "),
-                  TextSpan(text: "${_keFu.messageReadCount}", style: TextStyle(
+                  TextSpan(text: "用户id: ${_keFu?.imUser?.id ?? 0}   "),
+                  TextSpan(text: "${_keFu?.messageReadCount}", style: TextStyle(
                     color: Colors.deepOrange,
                     fontSize: 30.0,
                     fontWeight: FontWeight.w600

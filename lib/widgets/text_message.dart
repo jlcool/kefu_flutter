@@ -30,7 +30,7 @@ class TextMessage extends StatelessWidget {
             GestureDetector(
               onTap: onCancel,
               child:
-                  Text(" 撤回 ", style: TextStyle(color: themeData.primaryColor)),
+                  Text(" 撤回 ", style: TextStyle(color: themeData.buttonTheme.colorScheme.primary)),
             ),
           ],
         ),
@@ -67,7 +67,7 @@ class TextMessage extends StatelessWidget {
                           decoration: BoxDecoration(
                               color: isSelf
                                   ? themeData.primaryColor
-                                  : Colors.white,
+                                  : themeData.cardColor,
                               boxShadow: [
                                 BoxShadow(
                                   offset: Offset(0.0, 3.0),
@@ -86,8 +86,9 @@ class TextMessage extends StatelessWidget {
                               style: TextStyle(
                                   fontSize: 15.0,
                                   color: isSelf
-                                      ? Colors.white
-                                      : Colors.black87.withAlpha(180))),
+                                  ?Theme.of(context)
+                                  .colorScheme
+                                  .onPrimary:themeData.textTheme.body1.color)),
                         ),
                       )
                     ],
