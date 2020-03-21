@@ -1229,7 +1229,7 @@ class _KeFuState extends State<_KeFu> {
                       },
                       child: Text(
                         "发送",
-                        style: TextStyle(color: Theme.of(context).buttonTheme.colorScheme.primary),
+                        style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
                       ),
                     ),
                   ),
