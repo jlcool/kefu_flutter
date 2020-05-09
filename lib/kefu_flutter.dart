@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
@@ -294,7 +295,7 @@ class KeFuStore with ChangeNotifier {
         _registerImAccount();
       }
     } catch (e) {
-      debugPrint(e);
+      //debugPrint(e);
     }
   }
 
@@ -313,7 +314,7 @@ class KeFuStore with ChangeNotifier {
         _getRobot();
       }
     } catch (e) {
-      debugPrint(e);
+      //debugPrint(e);
     }
   }
 
@@ -432,7 +433,7 @@ class KeFuStore with ChangeNotifier {
       "biz_type": msgType,
       "version": "0",
       "key": DateTime.now().millisecondsSinceEpoch,
-      "platform": Platform.isAndroid ? 6 : 2,
+      "platform": kIsWeb?7:(Platform.isAndroid ? 6 : 2),
       "timestamp": timestamp,
       "read": 0,
       "transfer_account": 0,
@@ -1208,7 +1209,7 @@ class _KeFuState extends State<_KeFu> {
                           _onSubmit();
                           FocusScope.of(context).requestFocus(_focusNode);
                         },
-                        textInputAction: Platform.isIOS
+                        textInputAction: kIsWeb || Platform.isIOS
                             ? TextInputAction.send
                             : TextInputAction.newline,
                         onChanged: (String value) {
@@ -1217,7 +1218,7 @@ class _KeFuState extends State<_KeFu> {
                         },
                       ))),
               Offstage(
-                offstage: Platform.isIOS && !_isShowEmoJiPanel,
+                offstage: kIsWeb || (Platform.isIOS && !_isShowEmoJiPanel),
                 child: Center(
                   child: SizedBox(
                     width: 70.0,
@@ -1433,7 +1434,7 @@ class _KeFuState extends State<_KeFu> {
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: <Widget>[
-                                    Platform.isAndroid
+                                    kIsWeb || Platform.isAndroid
                                         ? SizedBox(
                                             width: 10.0,
                                             height: 10.0,
